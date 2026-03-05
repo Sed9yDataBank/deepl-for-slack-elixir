@@ -8,16 +8,13 @@ defmodule DeepThought.DeepL.API do
 
   use Tesla
 
-  # Get the authorization key from the application environment
   @auth_key Application.get_env(:deep_thought, :deepl)[:auth_key]
 
-  # Define the authorization header and other headers
   @headers [
     {"Authorization", "DeepL-Auth-Key #{@auth_key}"},
     {"Content-Type", "application/x-www-form-urlencoded"}
   ]
 
-  # Middlewares to handle base URL, form encoding, JSON decoding, logging, and timeout
   plug Tesla.Middleware.BaseUrl, "https://api.deepl.com/v2"
   plug Tesla.Middleware.EncodeFormUrlencoded
   plug Tesla.Middleware.DecodeJson
