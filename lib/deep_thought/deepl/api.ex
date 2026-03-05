@@ -8,8 +8,14 @@ defmodule DeepThought.DeepL.API do
 
   use Tesla
 
+  @auth_key Application.get_env(:deep_thought, :deepl)[:auth_key]
+
+  @headers [
+    {"Authorization", "DeepL-Auth-Key #{@auth_key}"},
+    {"Content-Type", "application/x-www-form-urlencoded"}
+  ]
+
   plug Tesla.Middleware.BaseUrl, "https://api.deepl.com/v2"
-  plug Tesla.Middleware.Query, auth_key: Application.get_env(:deep_thought, :deepl)[:auth_key]
   plug Tesla.Middleware.EncodeFormUrlencoded
   plug Tesla.Middleware.DecodeJson
   plug Tesla.Middleware.Logger
@@ -20,7 +26,7 @@ defmodule DeepThought.DeepL.API do
   """
   @spec translate(String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def translate(text, target_language) do
-    {:ok, response} = post("/translate", translate_request_body(text, target_language))
+    {:ok, response} = post("/translate", translate_request_body(text, target_language), headers: @headers)
 
     case response.status() do
       200 ->
